@@ -1,68 +1,47 @@
-# 🦟 BugOut (초음파 해충 퇴치 웹앱)
+# 🦟 BugOut Argon Edition (초정밀 초음파 해충 퇴치 신디사이저)
 
-웹 브라우저에서 바로 동작하는 **초음파 해충 퇴치 정적 웹 애플리케이션**입니다. 별도의 설치, 빌드 도구, 외부 의존성 없이 단일 HTML 파일(`index.html`)로 동작합니다.
+웹 브라우저에서 즉시 동작하는 **Argon 에디션 초음파 해충 퇴치 정적 웹 애플리케이션**입니다. 설치, 빌드 도구, 외부 의존성 없이 단일 HTML 파일([index.html](file:///D:/AI_Antigravity/bug_out/index.html))로 동작합니다.
 
 **👉 웹앱 바로가기 (Live Demo):** https://kiuza1004.github.io/anti_bug_out/
 
 ---
 
-## 🚀 주요 기능
+## ⚡ Argon 에디션 주요 기능
 
-- 🎚 **정밀 주파수 제어**: 100 Hz ~ 22,000 Hz (초음파 대역) 슬라이더 조절
-- 🐛 **해충별 최적 프리셋**: 모기(18kHz), 파리(15kHz), 날파리(17kHz), 쥐(22kHz), 바퀴벌레(12kHz), 거미(20kHz)
-- 🎵 **다양한 파형 지원**: Sine, Square, Sawtooth, Triangle
-- 🔁 **지능형 주파수 스윕**:
-  - `Slow` / `Fast`: 사인파 기반 ±1.5kHz 동적 변조
-  - `Random`: 4초마다 14~22kHz 불규칙 주파수 호핑 (내성/적응 방지)
-- 🎛 **맥놀이(Detune 듀얼 톤)**: 보조 오실레이터를 통한 차주파수 진폭 변조
-- ⏱ **타이머 및 실시간 카운트다운**: 5분, 15분, 30분 자동 종료 및 잔여 시간 시각화
-- 🔋 **화면 켜짐 유지 (Screen Wake Lock)**: 모바일 환경에서 재생 중 화면 꺼짐 방지
-- 📊 **실시간 오디오 스펙트럼 시각화**: HTML5 Canvas 및 AnalyserNode 기반 주파수 막대 뷰어
-- 🔉 **클릭 노이즈 방지**: 50ms Linear Ramp-in/out 적용
-- ⌨️ **키보드 단축키**: Space(재생/정지), 1~6(프리셋), ↑↓(주파수 변경, Shift=1kHz), M(음소거 토글)
-- 💾 **설정 자동 저장**: `localStorage`를 통해 사용자의 마지막 설정 유지
-
----
-
-## 🌐 웹앱 배포 (GitHub Pages)
-
-본 저장소의 `main` 브랜치에 코드가 푸시되면 GitHub Actions를 통해 자동으로 Pages에 배포됩니다.
-- 접속 URL: `https://kiuza1004.github.io/anti_bug_out/`
-- 배포 설정: **Settings → Pages → Source: `GitHub Actions`** (또는 `Deploy from a branch` → `main` / `root`)
-
----
-
-## 💻 로컬 실행 방법
-
-별도의 빌드나 의존성 설치가 필요하지 않습니다. 아무 정적 웹 서버나 브라우저로 실행할 수 있습니다.
-
-```bash
-# Python 내장 서버 사용 시
-python -m http.server 8080
-
-# 또는 Node.js npx serve 사용 시
-npx serve .
-```
-
-실행 후 브라우저에서 `http://localhost:8080`으로 접속합니다.
+- 🎛 **초정밀 주파수 HUD & 퀵 튜닝**:
+  - 100 Hz ~ 22,000 Hz 슬라이더 및 `-1kHz`, `-100Hz`, `+100Hz`, `+1kHz` 미세 조정 버튼
+  - 가청 대역 / 고주파 / 준초음파 / 초음파 대역 자동 판별 배지 및 실시간 출력 주파수 텔레메트리
+- 📊 **3-모드 고해상도(DPI) 비주얼라이저**:
+  - **스펙트럼 (FFT)**: 96-밴드 주파수 에너지 바 + 피크 홀드(Peak Hold) 인디케이터
+  - **파형 (Waveform)**: 실시간 타임-도메인 오실로스코프 네온 파형 뷰어
+  - **소나 파동 (Sonar Field)**: 초음파 방출 에너지 및 듀얼 오실레이터 간섭을 시각화하는 동심원 레이더
+- 🐛 **8종 해충 맞춤 프리셋 (단축키 1~8)**:
+  - 모기(18kHz), 파리(15kHz), 날파리(17kHz), 쥐·설치류(22kHz), 바퀴벌레(12kHz), 거미(20kHz), 개미(14kHz), 진드기·빈대(19.5kHz)
+  - 프리셋 선택 시 최적의 **주파수 + 파형 + 스윕 + 맥놀이(Detune) + 충격 펄스**가 원클릭으로 자동 조합
+- 🌊 **다중 변조 엔진 (Multi-Modulation Engine)**:
+  - **파형 합성**: Sine(사인파), Square(구형파), Sawtooth(톱니파), Triangle(삼각파)
+  - **주파수 스윕**: Off, Slow(±1.5kHz), Fast(±1.5kHz), Random(14~22kHz 불규칙 호핑)
+  - **충격 펄스 게이트 (Pulse Gate)**: 연속파, 2Hz 버스트, 6Hz 스트로브, Chaos(불규칙 충격파)로 해충 신경계 적응 방지
+  - **맥놀이 (Dual-Oscillator Detune)**: 0 ~ 100 Hz 보조 오실레이터 차주파수 간섭 생성
+- 🔊 **1kHz 스피커 가청 점검**:
+  - 사람 귀에 들리지 않는 초음파 출력 중 기기 스피커와 볼륨이 정상 작동하는지 즉시 확인하는 1kHz 테스트 톤 기능
+- ⏱ **자동 종료 타이머 & 텔레메트리**:
+  - 연속(∞), 5분, 15분, 30분, 60분 타이머 및 실시간 `MM:SS` 카운트다운
+  - 모바일 화면 꺼짐 방지(Screen Wake Lock), 오디오 샘플레이트, 합성 채널 상태 실시간 표시
 
 ---
 
-## 🛠 기술 스택
+## 💻 실행 방법
 
-- **언어**: HTML5, Vanilla JavaScript (ES6+), CSS3
-- **오디오 엔진**: Web Audio API (`AudioContext`, `OscillatorNode`, `GainNode`, `AnalyserNode`)
-- **디바이스 제어**: Screen Wake Lock API
-- **의존성 / 라이브러리**: 0개 (외부 CDN, 프레임워크 없음)
+1. **웹앱 바로 접속**: [https://kiuza1004.github.io/anti_bug_out/](https://kiuza1004.github.io/anti_bug_out/)
+2. **로컬 실행**: [index.html](file:///D:/AI_Antigravity/bug_out/index.html) 더블 클릭 또는 정적 서버(`python -m http.server 8080`) 실행
 
 ---
 
-## ⚠️ 주의사항
+## 🛠 기술 스택 및 비용
 
-1. 초음파의 해충 퇴치 효과는 생물학적 종, 주변 환경, 기기 스피커의 물리적 출력 한계에 따라 달라질 수 있습니다.
-2. 반려동물(개, 고양이, 설치류 등)은 사람보다 가청 주파수 대역이 넓어 불편함을 느낄 수 있습니다.
-3. 청력이 민감한 성인이나 유아의 경우 두통이 발생할 수 있으므로, 볼륨을 낮게 시작하십시오.
-4. **이어폰이나 헤드폰 착용 중에는 고음/초음파 재생을 삼가십시오.**
+- **기술 스택**: HTML5, Vanilla JavaScript, CSS3 Glassmorphism UI, Web Audio API, Canvas 2D, Screen Wake Lock API
+- **외부 의존성 / 비용**: 0개 / 0원 (100% 브라우저 내장 표준 기술)
 
 ---
 

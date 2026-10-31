@@ -3,402 +3,990 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#0b1220" />
-  <title>BugOut — 해충 퇴치기 (초음파 웹앱)</title>
-  <meta name="description" content="브라우저에서 바로 재생하는 초음파 해충 퇴치 웹앱. 모기·파리·쥐·날벌레 프리셋 제공." />
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ctext y='52' font-size='52'%3E%F0%9F%A6%9F%3C/text%3E%3C/svg%3E" />
+  <meta name="theme-color" content="#050811" />
+  <title>BugOut Argon — 초정밀 초음파 해충 퇴치 신디사이저</title>
+  <meta name="description" content="Argon 에디션: 듀얼 오실레이터, 주파수 스윕, 펄스 게이트, 3-모드 스펙트럼 애널라이저를 탑재한 브라우저 초음파 해충 퇴치 웹앱." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%2300f2fe'/%3E%3Cstop offset='100%25' stop-color='%238b5cf6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='32' cy='32' r='30' fill='%23080d1a' stroke='url(%23g)' stroke-width='4'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle'%3E%F0%9F%A6%9F%3C/text%3E%3C/svg%3E" />
   <style>
     :root {
-      --bg: #0b1220;
-      --bg-2: #111a2e;
-      --fg: #e6edf7;
-      --muted: #8a97b1;
-      --accent: #34d399;
-      --accent-2: #22d3ee;
-      --danger: #f87171;
-      --border: #1f2a44;
-      --card: #0f1830;
-      --chip-bg: #0c1530;
+      --bg-deep: #050811;
+      --bg-surface: #0a1020;
+      --bg-card: rgba(13, 21, 38, 0.78);
+      --bg-card-hover: rgba(19, 30, 54, 0.88);
+      --bg-chip: rgba(10, 17, 32, 0.9);
+      --fg: #f0f6ff;
+      --fg-sub: #c3d0e6;
+      --muted: #6e82a3;
+      --argon-cyan: #00f2fe;
+      --argon-blue: #4facfe;
+      --argon-violet: #8b5cf6;
+      --argon-emerald: #10b981;
+      --argon-amber: #f59e0b;
+      --argon-rose: #f43f5e;
+      --border: rgba(99, 130, 180, 0.18);
+      --border-bright: rgba(0, 242, 254, 0.45);
+      --glow-cyan: 0 0 20px rgba(0, 242, 254, 0.25);
+      --glow-violet: 0 0 24px rgba(139, 92, 246, 0.28);
+      --radius-lg: 20px;
+      --radius-md: 13px;
+      --radius-sm: 9px;
     }
-    * { box-sizing: border-box; }
-    html, body { margin: 0; padding: 0; background: var(--bg); color: var(--fg); }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg-deep);
+      color: var(--fg);
+      overflow-x: hidden;
+    }
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Pretendard", "Noto Sans KR", sans-serif;
       min-height: 100dvh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 24px 16px 48px;
-      background:
-        radial-gradient(1200px 600px at 50% -10%, #1b2750 0%, transparent 60%),
-        radial-gradient(800px 400px at 90% 110%, #0e3b3b 0%, transparent 60%),
-        var(--bg);
+      padding: 20px 14px 56px;
+      background-image:
+        radial-gradient(900px 480px at 15% -8%, rgba(0, 242, 254, 0.13) 0%, transparent 65%),
+        radial-gradient(850px 500px at 88% 10%, rgba(139, 92, 246, 0.15) 0%, transparent 65%),
+        radial-gradient(700px 420px at 50% 108%, rgba(16, 185, 129, 0.1) 0%, transparent 65%),
+        linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 100% 100%, 32px 32px, 32px 32px;
     }
+
+    /* Header */
     header {
       width: 100%;
-      max-width: 480px;
-      text-align: center;
-      margin-bottom: 20px;
+      max-width: 560px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      padding: 4px 4px;
     }
-    h1 {
-      font-size: 28px;
-      margin: 0 0 6px;
-      letter-spacing: -0.5px;
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
     }
-    .sub {
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(0, 242, 254, 0.16), rgba(139, 92, 246, 0.22));
+      border: 1px solid var(--border-bright);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 21px;
+      box-shadow: var(--glow-cyan);
+    }
+
+    .brand-text h1 {
+      font-size: 20px;
+      font-weight: 800;
+      margin: 0;
+      letter-spacing: -0.4px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .argon-tag {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--argon-cyan), var(--argon-violet));
+      color: #030712;
+      text-transform: uppercase;
+    }
+
+    .brand-text .sub {
       color: var(--muted);
-      font-size: 13px;
+      font-size: 11.5px;
+      margin-top: 2px;
     }
+
+    .live-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(13, 21, 38, 0.85);
+      border: 1px solid var(--border);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      color: var(--muted);
+      transition: all 0.25s ease;
+    }
+
+    .live-pill.active {
+      border-color: rgba(0, 242, 254, 0.55);
+      color: var(--argon-cyan);
+      box-shadow: var(--glow-cyan);
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #475569;
+      transition: all 0.25s ease;
+    }
+
+    .live-pill.active .live-dot {
+      background: var(--argon-cyan);
+      box-shadow: 0 0 10px var(--argon-cyan);
+      animation: pulseDot 1.4s infinite ease-in-out;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.35); opacity: 0.65; }
+    }
+
+    /* Main Container */
     main {
       width: 100%;
-      max-width: 480px;
+      max-width: 560px;
       display: grid;
-      gap: 16px;
+      gap: 14px;
     }
+
     .card {
-      background: linear-gradient(180deg, var(--card), var(--bg-2));
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       border: 1px solid var(--border);
-      border-radius: 16px;
+      border-radius: var(--radius-lg);
       padding: 18px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      position: relative;
+      overflow: hidden;
     }
-    .freq {
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-size: 11.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Frequency HUD */
+    .hud-top {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .freq-readout {
       display: flex;
       align-items: baseline;
-      justify-content: center;
       gap: 8px;
-      margin: 8px 0 14px;
     }
-    .freq .num {
-      font-size: 48px;
-      font-weight: 700;
+
+    .freq-readout .num {
+      font-size: 46px;
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -1.5px;
       font-variant-numeric: tabular-nums;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      background: linear-gradient(135deg, #ffffff 10%, var(--argon-cyan) 55%, var(--argon-violet) 100%);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
+      filter: drop-shadow(0 2px 12px rgba(0, 242, 254, 0.2));
     }
-    .freq .unit { color: var(--muted); font-size: 16px; }
+
+    .freq-readout .unit {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--argon-cyan);
+    }
+
+    .hud-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+    }
+
+    .band-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(0, 242, 254, 0.1);
+      border: 1px solid rgba(0, 242, 254, 0.3);
+      color: var(--argon-cyan);
+    }
+
+    .mod-live-text {
+      font-size: 11px;
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Visualizer */
+    .vis-wrapper {
+      position: relative;
+      border-radius: var(--radius-md);
+      background: #040710;
+      border: 1px solid rgba(99, 130, 180, 0.22);
+      overflow: hidden;
+      margin-bottom: 14px;
+      box-shadow: inset 0 4px 20px rgba(0, 0, 0, 0.8);
+    }
+
+    .vis-toolbar {
+      position: absolute;
+      top: 8px;
+      left: 10px;
+      right: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .vis-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.7px;
+      color: var(--muted);
+      background: rgba(5, 8, 17, 0.75);
+      padding: 3px 7px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .vis-tabs {
+      display: flex;
+      gap: 4px;
+      pointer-events: auto;
+      background: rgba(5, 8, 17, 0.8);
+      padding: 3px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .vis-tab {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-size: 10.5px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .vis-tab:hover { color: var(--fg); }
+    .vis-tab.active {
+      background: linear-gradient(135deg, rgba(0, 242, 254, 0.22), rgba(139, 92, 246, 0.28));
+      color: var(--argon-cyan);
+      border: 1px solid rgba(0, 242, 254, 0.35);
+    }
+
+    canvas#spec {
+      display: block;
+      width: 100%;
+      height: 120px;
+    }
+
+    /* Fine Tuning & Test Row */
+    .quick-tune {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .step-group {
+      display: flex;
+      gap: 5px;
+      flex: 1;
+    }
+
+    .step-btn {
+      flex: 1;
+      background: var(--bg-chip);
+      border: 1px solid var(--border);
+      color: var(--fg-sub);
+      padding: 7px 6px;
+      border-radius: var(--radius-sm);
+      font-size: 11.5px;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .step-btn:hover {
+      border-color: var(--argon-cyan);
+      color: var(--argon-cyan);
+      background: rgba(0, 242, 254, 0.08);
+    }
+
+    .step-btn:active { transform: scale(0.97); }
+
+    .test-btn {
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      color: #fbbf24;
+      padding: 7px 11px;
+      border-radius: var(--radius-sm);
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .test-btn:hover {
+      background: rgba(245, 158, 11, 0.22);
+      border-color: #fbbf24;
+    }
+
+    .test-btn.active {
+      background: #f59e0b;
+      color: #050811;
+      box-shadow: 0 0 14px rgba(245, 158, 11, 0.5);
+    }
+
+    /* Sliders & Rows */
+    .control-grid {
+      display: grid;
+      gap: 12px;
+    }
+
     .row {
       display: flex;
       align-items: center;
       gap: 12px;
-      margin: 10px 0;
     }
+
     .row label {
-      width: 70px;
-      color: var(--muted);
-      font-size: 13px;
+      width: 72px;
+      color: var(--fg-sub);
+      font-size: 12.5px;
+      font-weight: 600;
       flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 5px;
     }
+
     input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
       flex: 1;
-      accent-color: var(--accent);
+      height: 6px;
+      border-radius: 999px;
+      background: #152238;
+      outline: none;
       cursor: pointer;
+      border: 1px solid rgba(255, 255, 255, 0.06);
     }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--argon-cyan), var(--argon-blue));
+      border: 2px solid #ffffff;
+      box-shadow: 0 0 10px rgba(0, 242, 254, 0.6);
+      cursor: pointer;
+      transition: transform 0.1s ease;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.12);
+    }
+
     .val {
-      width: 65px;
+      width: 68px;
       text-align: right;
       font-variant-numeric: tabular-nums;
-      font-size: 13px;
-      color: var(--muted);
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--argon-cyan);
       flex-shrink: 0;
     }
 
-    .presets { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-    .preset {
-      background: var(--chip-bg);
+    .mute-btn {
+      background: var(--bg-chip);
       border: 1px solid var(--border);
-      color: var(--fg);
-      padding: 12px 10px;
-      border-radius: 12px;
+      color: var(--fg-sub);
+      width: 30px;
+      height: 28px;
+      border-radius: 8px;
       cursor: pointer;
-      text-align: left;
-      transition: transform .05s ease, border-color .15s ease, background .15s ease;
-    }
-    .preset:hover { border-color: var(--accent-2); }
-    .preset:active { transform: scale(0.98); }
-    .preset.active { border-color: var(--accent); background: #0d2438; }
-    .preset .name { font-weight: 600; font-size: 14px; }
-    .preset .hz { color: var(--muted); font-size: 12px; margin-top: 3px; }
-
-    .play {
-      width: 100%;
-      padding: 16px;
-      font-size: 18px;
-      font-weight: 700;
-      color: #04131c;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      border: none;
-      border-radius: 14px;
-      cursor: pointer;
-      transition: filter .15s ease, transform .05s ease;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-    }
-    .play:hover { filter: brightness(1.05); }
-    .play:active { transform: scale(0.99); }
-    .play.stop {
-      background: linear-gradient(135deg, #fb7185, #f97316);
-      color: #1a0606;
+      font-size: 13px;
+      padding: 0;
+      flex-shrink: 0;
+      transition: all 0.15s ease;
     }
 
-    .legal {
-      margin-top: 10px;
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.5;
+    .mute-btn:hover { border-color: var(--argon-cyan); }
+    .mute-btn.muted {
+      border-color: var(--argon-rose);
+      color: var(--argon-rose);
+      background: rgba(244, 63, 94, 0.12);
     }
-    .legal b { color: #f0d68a; }
 
+    /* Chip Toggles */
     .toggle {
       display: flex;
       gap: 6px;
       flex-wrap: wrap;
       align-items: center;
+      flex: 1;
     }
+
     .chip {
-      background: var(--chip-bg);
+      background: var(--bg-chip);
       border: 1px solid var(--border);
       color: var(--muted);
-      padding: 6px 10px;
-      border-radius: 999px;
+      padding: 6px 11px;
+      border-radius: var(--radius-sm);
       cursor: pointer;
       font-size: 12px;
-      transition: border-color .15s ease, color .15s ease, background .15s ease;
+      font-weight: 600;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
     }
-    .chip:hover { border-color: var(--accent-2); color: var(--fg); }
-    .chip.active { color: var(--fg); border-color: var(--accent); background: #0e273d; font-weight: 600; }
+
+    .chip:hover {
+      border-color: rgba(0, 242, 254, 0.4);
+      color: var(--fg);
+    }
+
+    .chip.active {
+      color: var(--fg);
+      border-color: var(--argon-cyan);
+      background: linear-gradient(135deg, rgba(0, 242, 254, 0.16), rgba(139, 92, 246, 0.2));
+      box-shadow: 0 0 12px rgba(0, 242, 254, 0.15);
+    }
 
     .timer-badge {
       display: inline-flex;
       align-items: center;
-      background: rgba(52, 211, 153, 0.15);
-      border: 1px solid var(--accent);
-      color: var(--accent);
-      padding: 2px 8px;
-      border-radius: 6px;
-      font-size: 11px;
-      font-weight: 600;
-      margin-left: 4px;
+      gap: 4px;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid var(--argon-emerald);
+      color: #34d399;
+      padding: 4px 9px;
+      border-radius: 8px;
+      font-size: 11.5px;
+      font-weight: 700;
+      margin-left: auto;
       font-variant-numeric: tabular-nums;
     }
 
-    .status-bar {
+    /* Presets Grid */
+    .presets {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 9px;
+    }
+
+    @media (min-width: 480px) {
+      .presets {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    .preset {
+      background: var(--bg-chip);
+      border: 1px solid var(--border);
+      color: var(--fg);
+      padding: 11px 10px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.18s ease;
       display: flex;
+      flex-direction: column;
       justify-content: space-between;
-      align-items: center;
-      padding: 0 4px;
-      font-size: 12px;
-      color: var(--muted);
+      gap: 6px;
+      position: relative;
+      overflow: hidden;
     }
-    .wakelock-indicator {
+
+    .preset:hover {
+      border-color: rgba(0, 242, 254, 0.45);
+      background: var(--bg-card-hover);
+      transform: translateY(-1px);
+    }
+
+    .preset:active { transform: scale(0.98); }
+
+    .preset.active {
+      border-color: var(--argon-cyan);
+      background: linear-gradient(160deg, rgba(0, 242, 254, 0.14), rgba(139, 92, 246, 0.18));
+      box-shadow: var(--glow-cyan);
+    }
+
+    .preset-top {
       display: flex;
       align-items: center;
-      gap: 4px;
-      font-size: 11px;
+      justify-content: space-between;
     }
+
+    .preset .emoji { font-size: 20px; }
+    .preset .key-hint {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--muted);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 1px 5px;
+      border-radius: 4px;
+    }
+
+    .preset .name {
+      font-weight: 700;
+      font-size: 13.5px;
+      color: var(--fg);
+    }
+
+    .preset .hz {
+      color: var(--argon-cyan);
+      font-size: 11px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .preset .desc {
+      color: var(--muted);
+      font-size: 10.5px;
+      line-height: 1.3;
+    }
+
+    /* Primary Play Button */
+    .action-bar {
+      display: flex;
+      gap: 10px;
+    }
+
+    .play {
+      flex: 1;
+      padding: 16px 20px;
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: -0.2px;
+      color: #030712;
+      background: linear-gradient(135deg, var(--argon-cyan) 0%, var(--argon-blue) 50%, var(--argon-violet) 100%);
+      border: none;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 8px 28px rgba(0, 242, 254, 0.28);
+    }
+
+    .play:hover {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
+      box-shadow: 0 12px 32px rgba(0, 242, 254, 0.38);
+    }
+
+    .play:active { transform: scale(0.99); }
+
+    .play.stop {
+      background: linear-gradient(135deg, #f43f5e 0%, #fb7185 50%, #f97316 100%);
+      color: #fff;
+      box-shadow: 0 8px 28px rgba(244, 63, 94, 0.35);
+      animation: activeBtnPulse 2s infinite ease-in-out;
+    }
+
+    @keyframes activeBtnPulse {
+      0%, 100% { box-shadow: 0 8px 28px rgba(244, 63, 94, 0.35); }
+      50% { box-shadow: 0 8px 38px rgba(244, 63, 94, 0.6); }
+    }
+
+    .reset-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--fg-sub);
+      padding: 0 16px;
+      border-radius: 16px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+
+    .reset-btn:hover {
+      color: var(--argon-cyan);
+      border-color: var(--argon-cyan);
+    }
+
+    /* Telemetry Status Bar */
+    .telemetry {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .tele-item {
+      background: rgba(10, 16, 32, 0.7);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 9px 11px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .tele-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--muted);
+      letter-spacing: 0.5px;
+    }
+
+    .tele-value {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--fg-sub);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-variant-numeric: tabular-nums;
+    }
+
     .wakelock-dot {
       width: 7px;
       height: 7px;
       border-radius: 50%;
-      background: #4b5563;
+      background: #475569;
+      flex-shrink: 0;
     }
+
     .wakelock-dot.active {
-      background: var(--accent);
-      box-shadow: 0 0 6px var(--accent);
+      background: var(--argon-emerald);
+      box-shadow: 0 0 8px var(--argon-emerald);
     }
 
-    .reset-btn {
-      background: transparent;
-      border: 1px solid var(--border);
+    .legal {
+      margin: 2px 0 0;
+      padding: 12px 14px;
+      background: rgba(13, 21, 38, 0.5);
+      border: 1px solid rgba(99, 130, 180, 0.12);
+      border-radius: var(--radius-md);
       color: var(--muted);
-      padding: 8px 16px;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 13px;
-      justify-self: center;
-      transition: color .15s ease, border-color .15s ease;
+      font-size: 11.5px;
+      line-height: 1.55;
     }
-    .reset-btn:hover { color: var(--fg); border-color: var(--accent); }
 
-    canvas#spec {
-      display: block;
-      width: 100%;
-      height: 56px;
-      background: #07101f;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      margin: 4px 0 12px;
-    }
+    .legal b { color: #fbbf24; }
 
     footer {
-      margin-top: 16px;
+      margin-top: 20px;
       color: var(--muted);
-      font-size: 12px;
+      font-size: 11.5px;
       text-align: center;
       line-height: 1.6;
     }
-    a { color: var(--accent-2); text-decoration: none; }
+
+    a { color: var(--argon-cyan); text-decoration: none; font-weight: 600; }
     a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
   <header>
-    <h1>🦟 BugOut</h1>
-    <div class="sub">브라우저 초음파 해충 퇴치 웹앱</div>
+    <div class="brand">
+      <div class="brand-icon" aria-hidden="true">🦟</div>
+      <div class="brand-text">
+        <h1>BugOut <span class="argon-tag">Argon</span></h1>
+        <div class="sub">초정밀 초음파 해충 퇴치 신디사이저</div>
+      </div>
+    </div>
+    <div class="live-pill" id="livePill">
+      <span class="live-dot"></span>
+      <span id="liveStateText">STANDBY</span>
+    </div>
   </header>
 
   <main>
-    <section class="card" aria-label="현재 주파수 제어기">
-      <div class="freq" aria-live="polite">
-        <span class="num" id="freqDisplay">18000</span>
-        <span class="unit">Hz</span>
-      </div>
-
-      <canvas id="spec" width="448" height="56" aria-hidden="true"></canvas>
-
-      <div class="row">
-        <label for="freq">주파수</label>
-        <input id="freq" type="range" min="100" max="22000" step="50" value="18000" />
-        <span class="val" id="freqVal">18 kHz</span>
-      </div>
-
-      <div class="row">
-        <label for="vol">볼륨</label>
-        <input id="vol" type="range" min="0" max="100" step="1" value="40" />
-        <span class="val" id="volVal">40%</span>
-      </div>
-
-      <div class="row">
-        <label>파형</label>
-        <div class="toggle" id="waveToggle" role="tablist">
-          <button class="chip active" type="button" data-wave="sine">Sine</button>
-          <button class="chip" type="button" data-wave="square">Square</button>
-          <button class="chip" type="button" data-wave="sawtooth">Saw</button>
-          <button class="chip" type="button" data-wave="triangle">Tri</button>
+    <!-- HUD & Visualizer Card -->
+    <section class="card" aria-label="초음파 스펙트럼 및 주파수 제어">
+      <div class="hud-top">
+        <div>
+          <div class="section-title">PRIMARY OSCILLATOR FREQUENCY</div>
+          <div class="freq-readout" aria-live="polite">
+            <span class="num" id="freqDisplay">18,000</span>
+            <span class="unit">Hz</span>
+          </div>
+        </div>
+        <div class="hud-meta">
+          <span class="band-badge" id="bandBadge">준초음파 (Near-Ultrasonic)</span>
+          <span class="mod-live-text" id="modLiveText">단일 톤 출력 대기</span>
         </div>
       </div>
 
-      <div class="row">
-        <label>스윕</label>
-        <div class="toggle" id="sweepToggle">
-          <button class="chip active" type="button" data-sweep="off">Off</button>
-          <button class="chip" type="button" data-sweep="slow">Slow</button>
-          <button class="chip" type="button" data-sweep="fast">Fast</button>
-          <button class="chip" type="button" data-sweep="random">Random</button>
+      <div class="vis-wrapper">
+        <div class="vis-toolbar">
+          <span class="vis-label" id="visInfoLabel">FFT 2048 · 0~24 kHz</span>
+          <div class="vis-tabs" id="visTabs" role="tablist">
+            <button type="button" class="vis-tab active" data-vis="spectrum">스펙트럼</button>
+            <button type="button" class="vis-tab" data-vis="wave">파형</button>
+            <button type="button" class="vis-tab" data-vis="sonar">소나 파동</button>
+          </div>
         </div>
+        <canvas id="spec" width="520" height="120" aria-hidden="true"></canvas>
       </div>
 
-      <div class="row">
-        <label for="detune">맥놀이</label>
-        <input id="detune" type="range" min="0" max="100" step="1" value="0" />
-        <span class="val" id="detuneVal">0 Hz</span>
+      <!-- Fine Step Controls & 1kHz Speaker Check -->
+      <div class="quick-tune">
+        <div class="step-group">
+          <button type="button" class="step-btn" data-step="-1000">-1 kHz</button>
+          <button type="button" class="step-btn" data-step="-100">-100 Hz</button>
+          <button type="button" class="step-btn" data-step="100">+100 Hz</button>
+          <button type="button" class="step-btn" data-step="1000">+1 kHz</button>
+        </div>
+        <button type="button" class="test-btn" id="testToneBtn" title="초음파가 들리지 않을 때 스피커 정상 작동 여부를 1kHz 가청음으로 확인합니다">
+          🔊 1kHz 스피커 점검
+        </button>
       </div>
 
-      <div class="row">
-        <label>타이머</label>
-        <div class="toggle" id="timerToggle">
-          <button class="chip active" type="button" data-timer="off">Off</button>
-          <button class="chip" type="button" data-timer="5">5분</button>
-          <button class="chip" type="button" data-timer="15">15분</button>
-          <button class="chip" type="button" data-timer="30">30분</button>
-          <span id="timerCountdown" class="timer-badge" style="display:none;"></span>
+      <!-- Sliders & Modulation Controls -->
+      <div class="control-grid">
+        <div class="row">
+          <label for="freq">주파수</label>
+          <input id="freq" type="range" min="100" max="22000" step="50" value="18000" />
+          <span class="val" id="freqVal">18.0 kHz</span>
         </div>
-      </div>
 
-      <div class="status-bar">
-        <div class="wakelock-indicator" id="wakeLockStatus" title="재생 중 모바일 화면 꺼짐 방지 상태">
-          <span class="wakelock-dot" id="wakeLockDot"></span>
-          <span id="wakeLockText">화면 켜짐 유지 준비됨</span>
+        <div class="row">
+          <label for="vol">출력 볼륨</label>
+          <button type="button" class="mute-btn" id="muteBtn" title="음소거 토글 (단축키 M)">🔊</button>
+          <input id="vol" type="range" min="0" max="100" step="1" value="40" />
+          <span class="val" id="volVal">40%</span>
         </div>
-        <div id="statusInfo">대기 중</div>
+
+        <div class="row">
+          <label for="detune">맥놀이</label>
+          <input id="detune" type="range" min="0" max="100" step="1" value="0" />
+          <span class="val" id="detuneVal">0 Hz</span>
+        </div>
+
+        <div class="row">
+          <label>파형 합성</label>
+          <div class="toggle" id="waveToggle" role="tablist">
+            <button class="chip active" type="button" data-wave="sine">∿ Sine</button>
+            <button class="chip" type="button" data-wave="square">⊓ Square</button>
+            <button class="chip" type="button" data-wave="sawtooth">/| Saw</button>
+            <button class="chip" type="button" data-wave="triangle">△ Tri</button>
+          </div>
+        </div>
+
+        <div class="row">
+          <label>주파수 스윕</label>
+          <div class="toggle" id="sweepToggle">
+            <button class="chip active" type="button" data-sweep="off">Off</button>
+            <button class="chip" type="button" data-sweep="slow">Slow</button>
+            <button class="chip" type="button" data-sweep="fast">Fast</button>
+            <button class="chip" type="button" data-sweep="random">Random</button>
+          </div>
+        </div>
+
+        <div class="row">
+          <label>충격 펄스</label>
+          <div class="toggle" id="pulseToggle">
+            <button class="chip active" type="button" data-pulse="off">연속파</button>
+            <button class="chip" type="button" data-pulse="slow">2Hz 버스트</button>
+            <button class="chip" type="button" data-pulse="fast">6Hz 스트로브</button>
+            <button class="chip" type="button" data-pulse="chaos">불규칙</button>
+          </div>
+        </div>
+
+        <div class="row">
+          <label>타이머</label>
+          <div class="toggle" id="timerToggle">
+            <button class="chip active" type="button" data-timer="off">연속(∞)</button>
+            <button class="chip" type="button" data-timer="5">5분</button>
+            <button class="chip" type="button" data-timer="15">15분</button>
+            <button class="chip" type="button" data-timer="30">30분</button>
+            <button class="chip" type="button" data-timer="60">60분</button>
+            <span id="timerCountdown" class="timer-badge" style="display:none;">⏱ 00:00</span>
+          </div>
+        </div>
       </div>
     </section>
 
+    <!-- Target Pest Presets Card -->
     <section class="card" aria-label="해충별 맞춤 프리셋">
+      <div class="card-header">
+        <div class="section-title">TARGET PEST PRESETS (단축키 1~8)</div>
+        <div style="font-size:11px; color:var(--muted);">클릭 시 최적 변조 자동 세팅</div>
+      </div>
       <div class="presets" id="presets"></div>
     </section>
 
-    <button id="play" class="play" type="button" aria-pressed="false">
-      <span>▶</span> 재생
-    </button>
+    <!-- Play & Reset Action Bar -->
+    <div class="action-bar">
+      <button id="play" class="play" type="button" aria-pressed="false">
+        <span>▶</span> 초음파 방출 시작
+      </button>
+      <button id="reset" class="reset-btn" type="button" title="모든 설정을 초기 상태로 복원">
+        ↺ 초기화
+      </button>
+    </div>
+
+    <!-- Telemetry Status Bar -->
+    <div class="telemetry">
+      <div class="tele-item">
+        <span class="tele-label">화면 절전 방지</span>
+        <div class="tele-value">
+          <span class="wakelock-dot" id="wakeLockDot"></span>
+          <span id="wakeLockText">대기 중</span>
+        </div>
+      </div>
+      <div class="tele-item">
+        <span class="tele-label">오디오 엔진</span>
+        <div class="tele-value" id="engineSampleRate">Web Audio 대기</div>
+      </div>
+      <div class="tele-item">
+        <span class="tele-label">합성 채널</span>
+        <div class="tele-value" id="channelStatus">Single Osc</div>
+      </div>
+    </div>
 
     <p class="legal">
-      <b>안내:</b> 초음파의 해충 퇴치 효과는 종·환경·기기 스피커 성능에 따라 다르며 과학적 근거가 제한적입니다.
-      반려동물(개·고양이·햄스터 등)이 불편해할 수 있고, 청력에 민감한 사람은 두통이 생길 수 있으니 볼륨을 낮게 시작하세요.
-      이어폰/헤드폰 착용 중 고음 재생은 권장하지 않습니다.
+      <b>⚡ Argon 음향 안전 가이드:</b> 초음파의 해충 퇴치 효과는 대상 종·공간 구조·스피커 주파수 응답 특성에 따라 차이가 있습니다.
+      반려동물(강아지·고양이·설치류 등)은 가청 대역이 넓어 스트레스를 받을 수 있으니 반려동물 근처에서는 사용을 피하십시오.
+      <b>이어폰·헤드폰 착용 상태에서는 절대 고출력으로 재생하지 마십시오.</b>
     </p>
-
-    <button id="reset" class="reset-btn" type="button">↺ 초기 설정으로</button>
   </main>
 
   <footer>
-    <div><a href="https://github.com/kiuza1004/anti_bug_out" target="_blank" rel="noopener">Antigravity BugOut</a> · 무의존성 정적 웹앱</div>
-    <div style="margin-top:6px;">단축키: Space 재생 · 1~6 프리셋 · ↑↓ 주파수(Shift=±1kHz) · M 음소거</div>
+    <div><a href="https://github.com/kiuza1004/anti_bug_out" target="_blank" rel="noopener">BugOut Argon Edition</a> · Zero-Dependency Ultrasonic Synthesizer</div>
+    <div style="margin-top:4px;">단축키: Space(재생/정지) · 1~8(프리셋) · ↑↓(±100Hz, Shift=±1kHz) · M(음소거)</div>
   </footer>
 
   <script>
     const PRESETS = [
-      { id: "mosquito", name: "모기", hz: 18000, wave: "sine", sweep: "slow", emoji: "🦟" },
-      { id: "fly",      name: "파리", hz: 15000, wave: "sine", sweep: "off",  emoji: "🪰" },
-      { id: "gnat",     name: "날파리", hz: 17000, wave: "sine", sweep: "slow", emoji: "🐝" },
-      { id: "rat",      name: "쥐",   hz: 22000, wave: "square", sweep: "fast", emoji: "🐀" },
-      { id: "roach",    name: "바퀴벌레", hz: 12000, wave: "sawtooth", sweep: "slow", emoji: "🪳" },
-      { id: "spider",   name: "거미", hz: 20000, wave: "sine", sweep: "off",  emoji: "🕷️" },
+      { id: "mosquito", name: "모기",     hz: 18000, wave: "sine",     sweep: "slow",   detune: 8,  pulse: "off",   emoji: "🦟", desc: "암컷 모기 비행 회피 대역" },
+      { id: "fly",      name: "파리",     hz: 15000, wave: "sine",     sweep: "fast",   detune: 12, pulse: "off",   emoji: "🪰", desc: "집파리 감각모 자극 대역" },
+      { id: "gnat",     name: "날파리",   hz: 17000, wave: "triangle", sweep: "slow",   detune: 5,  pulse: "off",   emoji: "🐝", desc: "초파리·소형 날벌레 회피" },
+      { id: "rat",      name: "쥐·설치류", hz: 22000, wave: "square",   sweep: "fast",   detune: 25, pulse: "fast",  emoji: "🐀", desc: "설치류 청각 경계 충격파" },
+      { id: "roach",    name: "바퀴벌레", hz: 12000, wave: "sawtooth", sweep: "random", detune: 15, pulse: "slow",  emoji: "🪳", desc: "신경 수용기 적응 방지" },
+      { id: "spider",   name: "거미",     hz: 20000, wave: "sine",     sweep: "slow",   detune: 10, pulse: "slow",  emoji: "🕷️", desc: "미세 감각모 공진 유도" },
+      { id: "ant",      name: "개미",     hz: 14000, wave: "square",   sweep: "random", detune: 20, pulse: "fast",  emoji: "🐜", desc: "더듬이 페로몬 교란 파형" },
+      { id: "mite",     name: "진드기·빈대", hz: 19500, wave: "sawtooth", sweep: "fast", detune: 18, pulse: "chaos", emoji: "🪲", desc: "고밀도 복합 불규칙 변조" },
     ];
 
     const $ = (id) => document.getElementById(id);
     const freqInput = $("freq");
     const freqDisplay = $("freqDisplay");
     const freqVal = $("freqVal");
+    const bandBadge = $("bandBadge");
+    const modLiveText = $("modLiveText");
     const volInput = $("vol");
     const volVal = $("volVal");
+    const muteBtn = $("muteBtn");
     const playBtn = $("play");
     const presetsEl = $("presets");
     const waveToggle = $("waveToggle");
     const sweepToggle = $("sweepToggle");
+    const pulseToggle = $("pulseToggle");
     const timerToggle = $("timerToggle");
     const timerCountdown = $("timerCountdown");
     const detuneInput = $("detune");
     const detuneVal = $("detuneVal");
-    const canvas = $("spec");
-    const cctx = canvas.getContext("2d");
+    const visTabs = $("visTabs");
+    const visInfoLabel = $("visInfoLabel");
+    const testToneBtn = $("testToneBtn");
+    const livePill = $("livePill");
+    const liveStateText = $("liveStateText");
     const wakeLockDot = $("wakeLockDot");
     const wakeLockText = $("wakeLockText");
-    const statusInfo = $("statusInfo");
+    const engineSampleRate = $("engineSampleRate");
+    const channelStatus = $("channelStatus");
+    const canvas = $("spec");
+    const cctx = canvas.getContext("2d");
 
-    const LS_KEY = "bugout:v1";
+    const LS_KEY = "bugout:v2";
 
     const INITIAL_STATE = {
       freq: 18000,
       volume: 0.4,
       wave: "sine",
       sweep: "off",
+      pulse: "off",
       timer: "off",
       detune: 0,
-      activePreset: null,
+      visMode: "spectrum",
+      activePreset: "mosquito",
     };
 
     let state = {
       ...INITIAL_STATE,
       playing: false,
+      testing1k: false,
     };
 
     let ctx = null;
     let osc = null;
     let osc2 = null;
     let gain = null;
+    let pulseGain = null;
     let analyser = null;
     let sweepTimer = null;
+    let pulseTimer = null;
     let rafId = null;
-    let timerHandle = null;
     let countdownInterval = null;
     let timerRemainingSeconds = 0;
     let wakeLockSentinel = null;
     let lastNonZeroVolume = 0.4;
+    let currentInstantFreq = 18000;
+    let peakBins = new Float32Array(512);
+    let sonarRings = [];
 
     function saveState() {
       try {
@@ -407,8 +995,10 @@
           volume: state.volume,
           wave: state.wave,
           sweep: state.sweep,
+          pulse: state.pulse,
           timer: state.timer,
           detune: state.detune,
+          visMode: state.visMode,
           activePreset: state.activePreset,
         }));
       } catch (err) {}
@@ -424,24 +1014,66 @@
           }
         }
       } catch (err) {}
+      currentInstantFreq = state.freq;
     }
 
     function fmtHz(hz) {
-      return hz >= 1000 ? (hz / 1000).toFixed(hz % 1000 === 0 ? 0 : 1) + " kHz" : hz + " Hz";
+      return hz >= 1000 ? (hz / 1000).toFixed(hz % 1000 === 0 ? 1 : 1) + " kHz" : hz + " Hz";
+    }
+
+    function fmtComma(n) {
+      return Number(n).toLocaleString("en-US");
+    }
+
+    function getBandDescription(hz) {
+      if (hz < 2000) return "가청 중·저음역 (Audible Low)";
+      if (hz < 10000) return "가청 고음역 (Audible High)";
+      if (hz < 16000) return "고주파 대역 (High Freq)";
+      if (hz < 20000) return "준초음파 (Near-Ultrasonic)";
+      return "초음파 대역 (Ultrasonic)";
     }
 
     function formatTime(totalSec) {
       const m = Math.floor(totalSec / 60);
       const s = totalSec % 60;
-      return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+      return `⏱ ${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+    }
+
+    function updateTelemetry() {
+      const isDual = state.detune > 0;
+      channelStatus.textContent = isDual
+        ? `Dual Osc (+${state.detune}Hz)`
+        : "Single Osc";
+
+      if (state.testing1k) {
+        modLiveText.textContent = "1,000 Hz 스피커 가청 점검 신호 출력 중";
+      } else if (state.playing) {
+        const f1 = Math.round(currentInstantFreq);
+        const f2 = f1 + state.detune;
+        const pulseLabel = state.pulse !== "off" ? ` · 펄스(${state.pulse.toUpperCase()})` : "";
+        modLiveText.textContent = isDual
+          ? `실시간: ${fmtComma(f1)} Hz + ${fmtComma(f2)} Hz${pulseLabel}`
+          : `실시간: ${fmtComma(f1)} Hz (${state.wave.toUpperCase()})${pulseLabel}`;
+      } else {
+        modLiveText.textContent = isDual
+          ? `대기: ${fmtComma(state.freq)} Hz & ${fmtComma(state.freq + state.detune)} Hz`
+          : `대기: ${fmtComma(state.freq)} Hz 단일 채널`;
+      }
     }
 
     function render() {
+      const displayHz = state.testing1k ? 1000 : state.freq;
       freqInput.value = state.freq;
-      freqDisplay.textContent = state.freq;
+      freqDisplay.textContent = fmtComma(displayHz);
       freqVal.textContent = fmtHz(state.freq);
-      volInput.value = Math.round(state.volume * 100);
-      volVal.textContent = Math.round(state.volume * 100) + "%";
+      bandBadge.textContent = getBandDescription(displayHz);
+
+      const volPct = Math.round(state.volume * 100);
+      volInput.value = volPct;
+      volVal.textContent = volPct + "%";
+      muteBtn.textContent = volPct === 0 ? "🔇" : volPct < 40 ? "🔉" : "🔊";
+      muteBtn.classList.toggle("muted", volPct === 0);
+
       detuneInput.value = state.detune;
       detuneVal.textContent = state.detune + " Hz";
 
@@ -451,43 +1083,77 @@
       for (const b of sweepToggle.querySelectorAll(".chip")) {
         b.classList.toggle("active", b.dataset.sweep === state.sweep);
       }
+      for (const b of pulseToggle.querySelectorAll(".chip")) {
+        b.classList.toggle("active", b.dataset.pulse === state.pulse);
+      }
       for (const b of timerToggle.querySelectorAll(".chip")) {
         b.classList.toggle("active", b.dataset.timer === state.timer);
+      }
+      for (const b of visTabs.querySelectorAll(".vis-tab")) {
+        b.classList.toggle("active", b.dataset.vis === state.visMode);
       }
       for (const b of presetsEl.querySelectorAll(".preset")) {
         b.classList.toggle("active", b.dataset.id === state.activePreset);
       }
 
+      if (state.visMode === "spectrum") {
+        visInfoLabel.textContent = "FFT SPECTRUM · 0~24 kHz";
+      } else if (state.visMode === "wave") {
+        visInfoLabel.textContent = "TIME-DOMAIN WAVEFORM";
+      } else {
+        visInfoLabel.textContent = "ULTRASONIC SONAR FIELD";
+      }
+
+      const active = state.playing || state.testing1k;
+      livePill.classList.toggle("active", active);
+      liveStateText.textContent = state.testing1k
+        ? "TEST 1kHz"
+        : state.playing
+          ? "EMITTING"
+          : "STANDBY";
+
       if (state.playing) {
-        playBtn.innerHTML = `<span>■</span> 정지`;
+        playBtn.innerHTML = `<span>■</span> 초음파 방출 정지`;
         playBtn.classList.add("stop");
         playBtn.setAttribute("aria-pressed", "true");
-        statusInfo.textContent = "초음파 방출 중";
       } else {
-        playBtn.innerHTML = `<span>▶</span> 재생`;
+        playBtn.innerHTML = `<span>▶</span> 초음파 방출 시작`;
         playBtn.classList.remove("stop");
         playBtn.setAttribute("aria-pressed", "false");
-        statusInfo.textContent = "정지됨";
       }
+
+      testToneBtn.classList.toggle("active", state.testing1k);
+      updateTelemetry();
     }
 
     function buildPresets() {
       presetsEl.innerHTML = "";
-      for (const p of PRESETS) {
+      PRESETS.forEach((p, idx) => {
         const b = document.createElement("button");
         b.className = "preset";
         b.type = "button";
         b.dataset.id = p.id;
-        b.innerHTML = `<div class="name">${p.emoji} ${p.name}</div><div class="hz">${fmtHz(p.hz)} · ${p.wave}${p.sweep !== "off" ? " · sweep" : ""}</div>`;
+        b.innerHTML = `
+          <div class="preset-top">
+            <span class="emoji">${p.emoji}</span>
+            <span class="key-hint">${idx + 1}</span>
+          </div>
+          <div class="name">${p.name}</div>
+          <div class="hz">${fmtHz(p.hz)} · ${p.wave}</div>
+          <div class="desc">${p.desc}</div>
+        `;
         b.addEventListener("click", () => applyPreset(p));
         presetsEl.appendChild(b);
-      }
+      });
     }
 
     function applyPreset(p) {
       state.freq = p.hz;
+      currentInstantFreq = p.hz;
       state.wave = p.wave;
       state.sweep = p.sweep;
+      state.detune = p.detune;
+      state.pulse = p.pulse;
       state.activePreset = p.id;
       if (state.playing) {
         restartTone();
@@ -504,6 +1170,7 @@
       if (ctx.state === "suspended") {
         await ctx.resume();
       }
+      engineSampleRate.textContent = `${(ctx.sampleRate / 1000).toFixed(1)} kHz Active`;
     }
 
     async function requestWakeLock() {
@@ -511,15 +1178,17 @@
         try {
           wakeLockSentinel = await navigator.wakeLock.request("screen");
           wakeLockDot.classList.add("active");
-          wakeLockText.textContent = "화면 켜짐 유지 활성";
+          wakeLockText.textContent = "절전 방지 켜짐";
           wakeLockSentinel.addEventListener("release", () => {
             wakeLockDot.classList.remove("active");
-            wakeLockText.textContent = "화면 켜짐 유지 준비됨";
+            wakeLockText.textContent = "대기 중";
           });
         } catch (e) {
           wakeLockDot.classList.remove("active");
-          wakeLockText.textContent = "절전 방지 미지원/차단";
+          wakeLockText.textContent = "자동 절전";
         }
+      } else {
+        wakeLockText.textContent = "미지원 환경";
       }
     }
 
@@ -531,50 +1200,62 @@
         wakeLockSentinel = null;
       }
       wakeLockDot.classList.remove("active");
-      wakeLockText.textContent = "화면 켜짐 유지 준비됨";
+      wakeLockText.textContent = "대기 중";
     }
 
     async function startTone() {
       await ensureCtx();
-      
+      stopToneInternal(false);
+
       osc = ctx.createOscillator();
+      pulseGain = ctx.createGain();
       gain = ctx.createGain();
 
       if (!analyser) {
         analyser = ctx.createAnalyser();
         analyser.fftSize = 2048;
-        analyser.smoothingTimeConstant = 0.85;
+        analyser.smoothingTimeConstant = 0.82;
         analyser.connect(ctx.destination);
       }
 
-      osc.type = state.wave;
-      osc.frequency.setValueAtTime(state.freq, ctx.currentTime);
+      const targetHz = state.testing1k ? 1000 : state.freq;
+      currentInstantFreq = targetHz;
+
+      osc.type = state.testing1k ? "sine" : state.wave;
+      osc.frequency.setValueAtTime(targetHz, ctx.currentTime);
+
+      pulseGain.gain.setValueAtTime(1, ctx.currentTime);
       gain.gain.setValueAtTime(0, ctx.currentTime);
 
-      osc.connect(gain);
+      osc.connect(pulseGain);
+      pulseGain.connect(gain);
       gain.connect(analyser);
 
       osc.start();
 
-      if (state.detune > 0) {
+      if (!state.testing1k && state.detune > 0) {
         startOsc2();
       }
 
-      // 50ms ramp-in 으로 클릭 노이즈 방지
       const now = ctx.currentTime;
       gain.gain.linearRampToValueAtTime(state.volume, now + 0.05);
 
-      startSweep();
+      if (!state.testing1k) {
+        startSweep();
+        startPulse();
+        startTimer();
+        requestWakeLock();
+      }
       startVis();
-      startTimer();
-      requestWakeLock();
     }
 
-    function stopTone() {
+    function stopToneInternal(clearVis = true) {
       stopSweep();
-      stopVis();
-      stopTimer();
-      releaseWakeLock();
+      stopPulse();
+      if (clearVis) {
+        stopTimer();
+        releaseWakeLock();
+      }
 
       if (gain && ctx) {
         const now = ctx.currentTime;
@@ -583,72 +1264,82 @@
         gain.gain.linearRampToValueAtTime(0, now + 0.05);
       }
 
-      if (osc) {
+      if (osc && ctx) {
         try {
-          osc.stop(ctx.currentTime + 0.08);
+          osc.stop(ctx.currentTime + 0.06);
         } catch (e) {}
       }
 
       stopOsc2();
       osc = null;
+      pulseGain = null;
       gain = null;
     }
 
+    function stopTone() {
+      stopToneInternal(true);
+      currentInstantFreq = state.freq;
+      updateTelemetry();
+    }
+
     function startOsc2() {
-      if (!ctx || !gain || osc2) return;
+      if (!ctx || !pulseGain || osc2) return;
       osc2 = ctx.createOscillator();
       osc2.type = state.wave;
-      osc2.frequency.setValueAtTime(state.freq + state.detune, ctx.currentTime);
-      osc2.connect(gain);
+      osc2.frequency.setValueAtTime(currentInstantFreq + state.detune, ctx.currentTime);
+      osc2.connect(pulseGain);
       osc2.start();
     }
 
     function stopOsc2() {
       if (!osc2) return;
       try {
-        osc2.stop(ctx.currentTime + 0.08);
+        osc2.stop(ctx.currentTime + 0.06);
       } catch (e) {}
       osc2 = null;
     }
 
     function restartTone() {
-      stopTone();
       startTone();
     }
 
     function startSweep() {
       stopSweep();
-      if (state.sweep === "off" || !osc) return;
+      if (state.sweep === "off" || !osc || state.testing1k) return;
 
       if (state.sweep === "random") {
         sweepTimer = setInterval(() => {
           if (!osc || !ctx) return;
           const f = Math.round(14000 + Math.random() * 8000);
+          currentInstantFreq = f;
           osc.frequency.setTargetAtTime(f, ctx.currentTime, 0.05);
           if (osc2) {
             osc2.frequency.setTargetAtTime(f + state.detune, ctx.currentTime, 0.05);
           }
-          freqDisplay.textContent = f;
+          freqDisplay.textContent = fmtComma(f);
           freqVal.textContent = fmtHz(f);
           freqInput.value = f;
-        }, 4000);
+          updateTelemetry();
+        }, 3200);
         return;
       }
 
-      const stepMs = state.sweep === "fast" ? 60 : 180;
-      const span = 1500; // ±1.5 kHz 주변 스윕
+      const stepMs = state.sweep === "fast" ? 50 : 140;
+      const span = 1500;
       const baseFreq = state.freq;
       let t = 0;
 
       sweepTimer = setInterval(() => {
         if (!osc || !ctx) return;
         t += stepMs;
-        const phase = Math.sin((t / (state.sweep === "fast" ? 800 : 2400)) * Math.PI * 2);
-        const f = Math.round(Math.max(50, Math.min(22000, baseFreq + phase * span)));
+        const phase = Math.sin((t / (state.sweep === "fast" ? 750 : 2400)) * Math.PI * 2);
+        const f = Math.round(Math.max(100, Math.min(22000, baseFreq + phase * span)));
+        currentInstantFreq = f;
         osc.frequency.setTargetAtTime(f, ctx.currentTime, 0.02);
         if (osc2) {
           osc2.frequency.setTargetAtTime(f + state.detune, ctx.currentTime, 0.02);
         }
+        updateTelemetry();
       }, stepMs);
     }
 
@@ -659,40 +1350,215 @@
       }
     }
 
-    function startVis() {
-      if (!analyser) return;
-      cancelAnimationFrame(rafId);
-      const bins = analyser.frequencyBinCount;
-      const data = new Uint8Array(bins);
-      const nyq = ctx.sampleRate / 2;
-      const maxHz = 24000;
-      const usableBins = Math.min(bins, Math.floor((maxHz / nyq) * bins));
+    function startPulse() {
+      stopPulse();
+      if (!pulseGain || !ctx) return;
+      if (state.pulse === "off" || state.testing1k) {
+        pulseGain.gain.setTargetAtTime(1, ctx.currentTime, 0.015);
+        return;
+      }
 
-      const draw = () => {
-        analyser.getByteFrequencyData(data);
-        const w = canvas.width;
-        const h = canvas.height;
-        cctx.clearRect(0, 0, w, h);
-        const barW = w / usableBins;
+      let high = true;
+      const runGate = () => {
+        if (!pulseGain || !ctx) return;
+        high = !high;
+        const target = high ? 1.0 : 0.08;
+        pulseGain.gain.setTargetAtTime(target, ctx.currentTime, 0.012);
 
-        for (let i = 0; i < usableBins; i++) {
-          const v = data[i] / 255;
-          const bh = v * h;
-          const hue = 150 + (i / usableBins) * 60;
-          cctx.fillStyle = `hsl(${hue}, 70%, 55%)`;
-          cctx.fillRect(i * barW, h - bh, Math.max(1, barW - 0.5), bh);
+        if (state.pulse === "chaos") {
+          const nextMs = Math.round(70 + Math.random() * 350);
+          pulseTimer = setTimeout(runGate, nextMs);
         }
-        rafId = requestAnimationFrame(draw);
       };
-      rafId = requestAnimationFrame(draw);
+
+      if (state.pulse === "chaos") {
+        pulseTimer = setTimeout(runGate, 120);
+      } else {
+        const intervalMs = state.pulse === "fast" ? 85 : 250;
+        pulseTimer = setInterval(runGate, intervalMs);
+      }
     }
 
-    function stopVis() {
-      if (rafId) {
-        cancelAnimationFrame(rafId);
-        rafId = null;
+    function stopPulse() {
+      if (pulseTimer) {
+        clearInterval(pulseTimer);
+        clearTimeout(pulseTimer);
+        pulseTimer = null;
       }
-      cctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (pulseGain && ctx) {
+        try {
+          pulseGain.gain.setTargetAtTime(1, ctx.currentTime, 0.015);
+        } catch (e) {}
+      }
+    }
+
+    function resizeCanvas() {
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      if (rect.width === 0) return;
+      const targetW = Math.round(rect.width * dpr);
+      const targetH = Math.round(rect.height * dpr);
+      if (canvas.width !== targetW || canvas.height !== targetH) {
+        canvas.width = targetW;
+        canvas.height = targetH;
+      }
+    }
+
+    function drawIdleGrid(w, h) {
+      cctx.clearRect(0, 0, w, h);
+      cctx.strokeStyle = "rgba(99, 130, 180, 0.1)";
+      cctx.lineWidth = 1;
+
+      const rows = 4;
+      for (let r = 1; r < rows; r++) {
+        const y = (h / rows) * r;
+        cctx.beginPath();
+        cctx.moveTo(0, y);
+        cctx.lineTo(w, y);
+        cctx.stroke();
+      }
+
+      const cols = 6;
+      for (let c = 1; c < cols; c++) {
+        const x = (w / cols) * c;
+        cctx.beginPath();
+        cctx.moveTo(x, 0);
+        cctx.lineTo(x, h);
+        cctx.stroke();
+      }
+
+      // 주파수 마커 표시
+      const maxHz = 24000;
+      const targetX = Math.min(w - 2, Math.max(2, (currentInstantFreq / maxHz) * w));
+      cctx.strokeStyle = "rgba(0, 242, 254, 0.28)";
+      cctx.setLineDash([4, 4]);
+      cctx.beginPath();
+      cctx.moveTo(targetX, 0);
+      cctx.lineTo(targetX, h);
+      cctx.stroke();
+      cctx.setLineDash([]);
+    }
+
+    function startVis() {
+      cancelAnimationFrame(rafId);
+      resizeCanvas();
+
+      const bins = analyser ? analyser.frequencyBinCount : 1024;
+      const freqData = new Uint8Array(bins);
+      const timeData = new Uint8Array(bins);
+
+      const draw = () => {
+        resizeCanvas();
+        const w = canvas.width;
+        const h = canvas.height;
+        const active = state.playing || state.testing1k;
+
+        drawIdleGrid(w, h);
+
+        if (!active || !analyser) {
+          // 대기 상태에서도 정적 타겟 주파수 가이드 렌더링
+          rafId = requestAnimationFrame(draw);
+          return;
+        }
+
+        if (state.visMode === "spectrum") {
+          analyser.getByteFrequencyData(freqData);
+          const nyq = ctx ? ctx.sampleRate / 2 : 24000;
+          const maxHz = 24000;
+          const usableBins = Math.min(bins, Math.floor((maxHz / nyq) * bins));
+          const barCount = 96;
+          const step = Math.max(1, Math.floor(usableBins / barCount));
+          const barW = w / barCount;
+
+          for (let i = 0; i < barCount; i++) {
+            let maxVal = 0;
+            const startIdx = i * step;
+            for (let j = 0; j < step && startIdx + j < usableBins; j++) {
+              if (freqData[startIdx + j] > maxVal) maxVal = freqData[startIdx + j];
+            }
+            const v = maxVal / 255;
+            const bh = v * (h - 18);
+
+            if (bh > peakBins[i]) {
+              peakBins[i] = bh;
+            } else {
+              peakBins[i] = Math.max(0, peakBins[i] - 0.9);
+            }
+
+            const ratio = i / barCount;
+            const hue = 185 + ratio * 85;
+            cctx.fillStyle = `hsla(${hue}, 92%, 58%, 0.88)`;
+            cctx.fillRect(i * barW + 1, h - bh, Math.max(1.5, barW - 2), bh);
+
+            if (peakBins[i] > 2) {
+              cctx.fillStyle = "#00f2fe";
+              cctx.fillRect(i * barW + 1, h - peakBins[i] - 2, Math.max(1.5, barW - 2), 2);
+            }
+          }
+        } else if (state.visMode === "wave") {
+          analyser.getByteTimeDomainData(timeData);
+          cctx.lineWidth = 2.2 * (window.devicePixelRatio || 1);
+          cctx.strokeStyle = "#00f2fe";
+          cctx.shadowColor = "rgba(0, 242, 254, 0.7)";
+          cctx.shadowBlur = 10;
+          cctx.beginPath();
+
+          const sliceWidth = w / Math.min(bins, 512);
+          let x = 0;
+          for (let i = 0; i < Math.min(bins, 512); i++) {
+            const v = timeData[i] / 128.0;
+            const y = (v * h) / 2;
+            if (i === 0) cctx.moveTo(x, y);
+            else cctx.lineTo(x, y);
+            x += sliceWidth;
+          }
+          cctx.stroke();
+          cctx.shadowBlur = 0;
+        } else if (state.visMode === "sonar") {
+          analyser.getByteFrequencyData(freqData);
+          const cx = w / 2;
+          const cy = h / 2;
+          const maxR = Math.min(w, h) * 0.45;
+
+          const spawnSpeed = state.pulse === "fast" ? 0.08 : 0.04;
+          if (sonarRings.length === 0 || sonarRings[sonarRings.length - 1].r > maxR * 0.25) {
+            sonarRings.push({ r: 4, alpha: 0.95 });
+          }
+
+          for (let i = sonarRings.length - 1; i >= 0; i--) {
+            const ring = sonarRings[i];
+            ring.r += (1.2 + (currentInstantFreq / 22000) * 1.8) * (window.devicePixelRatio || 1);
+            ring.alpha = Math.max(0, 1 - ring.r / (maxR * 2.2));
+
+            cctx.beginPath();
+            cctx.arc(cx, cy, ring.r, 0, Math.PI * 2);
+            cctx.strokeStyle = `rgba(0, 242, 254, ${ring.alpha * Math.max(0.2, state.volume)})`;
+            cctx.lineWidth = 2 * (window.devicePixelRatio || 1);
+            cctx.stroke();
+
+            if (state.detune > 0) {
+              cctx.beginPath();
+              cctx.arc(cx, cy, ring.r * 0.85, 0, Math.PI * 2);
+              cctx.strokeStyle = `rgba(139, 92, 246, ${ring.alpha * 0.7})`;
+              cctx.lineWidth = 1.5 * (window.devicePixelRatio || 1);
+              cctx.stroke();
+            }
+
+            if (ring.alpha <= 0.02) {
+              sonarRings.splice(i, 1);
+            }
+          }
+
+          cctx.beginPath();
+          cctx.arc(cx, cy, 5 * (window.devicePixelRatio || 1), 0, Math.PI * 2);
+          cctx.fillStyle = "#00f2fe";
+          cctx.fill();
+        }
+
+        rafId = requestAnimationFrame(draw);
+      };
+
+      rafId = requestAnimationFrame(draw);
     }
 
     function startTimer() {
@@ -711,7 +1577,7 @@
       countdownInterval = setInterval(() => {
         timerRemainingSeconds--;
         if (timerRemainingSeconds <= 0) {
-          timerCountdown.textContent = "00:00";
+          timerCountdown.textContent = "⏱ 00:00";
           stopTimer();
           if (state.playing) {
             state.playing = false;
@@ -725,10 +1591,6 @@
     }
 
     function stopTimer() {
-      if (timerHandle) {
-        clearTimeout(timerHandle);
-        timerHandle = null;
-      }
       if (countdownInterval) {
         clearInterval(countdownInterval);
         countdownInterval = null;
@@ -738,20 +1600,76 @@
       }
     }
 
-    // 컨트롤 이벤트 리스너
-    freqInput.addEventListener("input", () => {
-      state.freq = Number(freqInput.value);
+    function adjustFrequency(delta) {
+      const next = Math.max(100, Math.min(22000, state.freq + delta));
+      state.freq = next;
+      currentInstantFreq = next;
       state.activePreset = null;
-      if (osc && ctx) osc.frequency.setTargetAtTime(state.freq, ctx.currentTime, 0.01);
-      if (osc2 && ctx) osc2.frequency.setTargetAtTime(state.freq + state.detune, ctx.currentTime, 0.01);
+      if (osc && ctx && !state.testing1k) {
+        osc.frequency.setTargetAtTime(state.freq, ctx.currentTime, 0.01);
+      }
+      if (osc2 && ctx && !state.testing1k) {
+        osc2.frequency.setTargetAtTime(state.freq + state.detune, ctx.currentTime, 0.01);
+      }
       saveState();
       render();
+    }
+
+    function toggleMute() {
+      if (state.volume > 0) {
+        lastNonZeroVolume = state.volume;
+        state.volume = 0;
+      } else {
+        state.volume = lastNonZeroVolume || 0.4;
+      }
+      if (gain && ctx) {
+        gain.gain.setTargetAtTime(state.volume, ctx.currentTime, 0.02);
+      }
+      saveState();
+      render();
+    }
+
+    // Event Listeners
+    freqInput.addEventListener("input", () => {
+      state.freq = Number(freqInput.value);
+      currentInstantFreq = state.freq;
+      state.activePreset = null;
+      if (osc && ctx && !state.testing1k) {
+        osc.frequency.setTargetAtTime(state.freq, ctx.currentTime, 0.01);
+      }
+      if (osc2 && ctx && !state.testing1k) {
+        osc2.frequency.setTargetAtTime(state.freq + state.detune, ctx.currentTime, 0.01);
+      }
+      saveState();
+      render();
+    });
+
+    document.querySelectorAll(".step-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        adjustFrequency(Number(btn.dataset.step));
+      });
     });
 
     volInput.addEventListener("input", () => {
       state.volume = Number(volInput.value) / 100;
       if (state.volume > 0) lastNonZeroVolume = state.volume;
-      if (gain && ctx) gain.gain.setTargetAtTime(state.volume, ctx.currentTime, 0.02);
+      if (gain && ctx) {
+        gain.gain.setTargetAtTime(state.volume, ctx.currentTime, 0.02);
+      }
+      saveState();
+      render();
+    });
+
+    muteBtn.addEventListener("click", toggleMute);
+
+    detuneInput.addEventListener("input", () => {
+      state.detune = Number(detuneInput.value);
+      state.activePreset = null;
+      if (state.playing && !state.testing1k) {
+        if (state.detune > 0 && !osc2) startOsc2();
+        else if (state.detune === 0 && osc2) stopOsc2();
+        else if (osc2 && ctx) osc2.frequency.setTargetAtTime(currentInstantFreq + state.detune, ctx.currentTime, 0.01);
+      }
       saveState();
       render();
     });
@@ -761,19 +1679,8 @@
       if (!btn) return;
       state.wave = btn.dataset.wave;
       state.activePreset = null;
-      if (osc) osc.type = state.wave;
-      if (osc2) osc2.type = state.wave;
-      saveState();
-      render();
-    });
-
-    detuneInput.addEventListener("input", () => {
-      state.detune = Number(detuneInput.value);
-      if (state.playing) {
-        if (state.detune > 0 && !osc2) startOsc2();
-        else if (state.detune === 0 && osc2) stopOsc2();
-        else if (osc2 && ctx) osc2.frequency.setTargetAtTime(state.freq + state.detune, ctx.currentTime, 0.01);
-      }
+      if (osc && !state.testing1k) osc.type = state.wave;
+      if (osc2 && !state.testing1k) osc2.type = state.wave;
       saveState();
       render();
     });
@@ -783,9 +1690,24 @@
       if (!btn) return;
       state.sweep = btn.dataset.sweep;
       state.activePreset = null;
-      if (state.playing) {
+      if (state.playing && !state.testing1k) {
         stopSweep();
+        currentInstantFreq = state.freq;
+        if (osc && ctx) osc.frequency.setTargetAtTime(state.freq, ctx.currentTime, 0.02);
+        if (osc2 && ctx) osc2.frequency.setTargetAtTime(state.freq + state.detune, ctx.currentTime, 0.02);
         startSweep();
+      }
+      saveState();
+      render();
+    });
+
+    pulseToggle.addEventListener("click", (e) => {
+      const btn = e.target.closest(".chip");
+      if (!btn) return;
+      state.pulse = btn.dataset.pulse;
+      state.activePreset = null;
+      if (state.playing && !state.testing1k) {
+        startPulse();
       }
       saveState();
       render();
@@ -804,7 +1726,30 @@
       render();
     });
 
+    visTabs.addEventListener("click", (e) => {
+      const btn = e.target.closest(".vis-tab");
+      if (!btn) return;
+      state.visMode = btn.dataset.vis;
+      saveState();
+      render();
+    });
+
+    testToneBtn.addEventListener("click", async () => {
+      state.testing1k = !state.testing1k;
+      if (state.testing1k) {
+        await startTone();
+      } else {
+        if (state.playing) {
+          await startTone();
+        } else {
+          stopTone();
+        }
+      }
+      render();
+    });
+
     playBtn.addEventListener("click", async () => {
+      state.testing1k = false;
       state.playing = !state.playing;
       if (state.playing) {
         await startTone();
@@ -815,12 +1760,14 @@
     });
 
     $("reset").addEventListener("click", () => {
-      if (!confirm("모든 설정을 초기값으로 되돌릴까요?")) return;
+      if (!confirm("모든 신디사이저 설정을 초기값으로 복원할까요?")) return;
+      state.testing1k = false;
       if (state.playing) {
         state.playing = false;
         stopTone();
       }
       Object.assign(state, INITIAL_STATE);
+      currentInstantFreq = state.freq;
       lastNonZeroVolume = INITIAL_STATE.volume;
       try {
         localStorage.removeItem(LS_KEY);
@@ -828,17 +1775,16 @@
       render();
     });
 
-    // 단축키
     window.addEventListener("keydown", (e) => {
       const tag = (e.target.tagName || "").toLowerCase();
       if (tag === "input" || tag === "textarea" || tag === "select") return;
-      
+
       if (e.key === " ") {
         e.preventDefault();
         playBtn.click();
         return;
       }
-      if (/^[1-6]$/.test(e.key)) {
+      if (/^[1-8]$/.test(e.key)) {
         const idx = Number(e.key) - 1;
         if (PRESETS[idx]) applyPreset(PRESETS[idx]);
         return;
@@ -846,42 +1792,31 @@
       if (e.key === "ArrowUp" || e.key === "ArrowDown") {
         e.preventDefault();
         const step = e.shiftKey ? 1000 : 100;
-        const next = state.freq + (e.key === "ArrowUp" ? step : -step);
-        state.freq = Math.max(100, Math.min(22000, next));
-        state.activePreset = null;
-        if (osc && ctx) osc.frequency.setTargetAtTime(state.freq, ctx.currentTime, 0.01);
-        if (osc2 && ctx) osc2.frequency.setTargetAtTime(state.freq + state.detune, ctx.currentTime, 0.01);
-        saveState();
-        render();
+        adjustFrequency(e.key === "ArrowUp" ? step : -step);
         return;
       }
       if (e.key === "m" || e.key === "M") {
-        if (state.volume > 0) {
-          lastNonZeroVolume = state.volume;
-          state.volume = 0;
-        } else {
-          state.volume = lastNonZeroVolume || 0.4;
-        }
-        if (gain && ctx) gain.gain.setTargetAtTime(state.volume, ctx.currentTime, 0.02);
-        saveState();
-        render();
+        toggleMute();
         return;
       }
     });
 
-    // 탭 전환 시 자동 일시정지 (배터리 보존 및 백그라운드 오청 방지)
+    window.addEventListener("resize", resizeCanvas);
+
     document.addEventListener("visibilitychange", () => {
-      if (document.hidden && state.playing) {
+      if (document.hidden && (state.playing || state.testing1k)) {
         state.playing = false;
+        state.testing1k = false;
         stopTone();
         render();
       }
     });
 
-    // 초기 실행
+    // Boot
     loadState();
     buildPresets();
     render();
+    startVis();
   </script>
 </body>
 </html>
